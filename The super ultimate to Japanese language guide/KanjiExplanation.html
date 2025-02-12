@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kanji</title>
+  <style>
+   body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #98c1ff;
+    color: #000000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; 
+    flex-direction: column; 
+    padding: 20px; 
+    box-sizing: border-box; 
+    overflow: auto; 
+    transition: background-color 0.3s, color 0.3s;
+    text-align: center;
+  }
+
+  .game-container {
+    text-align: center;
+    background-color: #292626;
+    padding: 50px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 500px; 
+    transition: background-color 0.3s;
+    overflow-y: auto;
+  }
+
+    .title {
+      font-size: 32px;
+      font-weight: 500; /* タイトルは少し太めに */
+      margin-bottom: 20px;
+    }
+
+    .description {
+      font-size: 16px;
+      margin-bottom: 20px;
+      line-height: 1.5;
+      text-align: left;
+    }
+
+    .highlight {
+      color: #007bff;
+      font-weight: bold;
+    }
+
+    .important {
+      color: #ff6347;
+      font-weight: bold;
+    }
+
+    .return-button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .return-button:hover {
+      background-color: #0056b3;
+    }
+
+    /* Dark Mode Styles */
+    body.dark-mode {
+      background-color: #121212;
+      color: #ffffff;
+    }
+
+    .game-container.dark-mode {
+      background-color: #1f1f1f;
+    }
+
+    /* レスポンシブ対応: スマートフォンなどの小さい画面に対応 */
+    @media (max-width: 600px) {
+      .title {
+        font-size: 24px;
+      }
+
+      .description {
+        font-size: 14px;
+      }
+
+      .return-button {
+        font-size: 14px;
+        padding: 8px 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="game-container">
+    <div class="title">Kanji</div>
+    <div class="description">
+      <p>Kanji are a crucial part of the Japanese writing system, derived from Chinese characters. They represent meanings and are often used in combination with other characters to form words. Each kanji has its own meaning and can have multiple readings (pronunciations), depending on the context.</p>
+
+      <p><span class="highlight">Features of Kanji:</span></p>
+      <p>Kanji characters have several key features that distinguish them from other writing systems.</p>
+
+      <ul>
+        <li><span class="highlight">Meaning:</span> Each kanji character has its own meaning, and these meanings are combined to form words in the language.</li>
+        <li><span class="highlight">On'yomi and Kun'yomi:</span> Kanji have two main types of readings. On'yomi is the reading derived from the original Chinese pronunciation, while Kun'yomi is the Japanese reading based on the native Japanese word for the object or concept the kanji represents.</li>
+        <li><span class="important">Multiple readings:</span> Many kanji have multiple readings depending on the word they are used in (e.g., the kanji "生" can be read as "sei," "shou," or "ikiru").</li>
+        <li><span class="highlight">Stroke count:</span> Kanji characters are made up of strokes, and the more strokes they have, the harder they are to write and memorize. The shape of a kanji often relates to its meaning, though this isn't always the case.</li>
+      </ul>
+
+      <p><span class="important">Origins of Kanji:</span></p>
+      <p>Kanji originated in China around 3000 BCE and were initially pictographs (symbols resembling the objects they represent). For example, the kanji for "mountain" (山) looks like a mountain. Over time, more abstract characters were developed, and the system evolved to include phonetic components.</p>
+
+      <p><span class="highlight">Types of Kanji:</span></p>
+      <p>Kanji characters can be categorized into several types, each serving different purposes in the language:</p>
+      <ul>
+        <li><span class="highlight">Jouyou kanji:</span> The set of kanji that are most commonly used in daily life in Japan. There are 2,136 of these kanji characters.</li>
+        <li><span class="highlight">Kyōiku kanji:</span> The kanji learned in elementary school, which are typically introduced in 1st through 6th grade. There are 1,006 of these kanji.</li>
+        <li><span class="highlight">Radicals:</span> The components of kanji characters, used for classifying them. Radicals often give clues about the meaning or pronunciation of a kanji.</li>
+      </ul>
+    </div>
+    <button class="return-button" onclick="goBack()">Return</button>
+  </div>
+
+  <script>
+    // Check for dark mode preference in localStorage
+    let isDarkMode = localStorage.getItem('darkMode') === 'true';
+    if (isDarkMode) {
+      document.body.classList.add('dark-mode');
+    }
+
+    // Function to handle the return button click
+    function goBack() {
+      window.history.back();
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kanji Reading</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #98c1ff;
+      color: #000000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .game-container {
+      text-align: center;
+      background-color: #f0f0f0;
+      padding: 50px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 300px;
+      transition: background-color 0.3s;
+    }
+
+    .title {
+      font-size: 32px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .button {
+      display: inline-block;
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      margin: 10px;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    
+
+    .button:hover {
+      background-color: #45a049;
+    }
+
+    .restart-button {
+      background-color: #f44336;
+    }
+
+    .restart-button:hover {
+      background-color: #e53935;
+    }
+
+    body.dark-mode {
+      background-color: #121212;
+      color: #ffffff;
+    }
+
+    body.dark-mode .game-container {
+      background-color: #1f1f1f;
+    }
+
+    .hiragana {
+      font-size: 50px;
+      margin-bottom: 10px;
+    }
+
+    .english-translation {
+      font-size: 20px;
+      color: white; /* Updated color to white */
+      margin-bottom: 20px; /* Added space after English translation */
+    }
+
+    .input-field {
+      padding: 10px;
+      font-size: 27px;
+      width: 100%;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .result {
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .remaining-count {
+      font-size: 18px;
+      margin-top: 10px;
+    }
+
+    .final-result {
+      font-size: 24px;
+      margin-top: 20px;
+      color: #4CAF50;
+    }
+
+    a[href="Howtouse.html"] {
+  background-color: #007bff;  /* Blue color */
+}
+
+a[href="Howtouse.html"]:hover {
+  background-color: #0056b3;  /* Darker blue when hovered */
+}
+    .explanation-button {
+      background-color: #e68a00;
+      color: white;
+    }
+
+    .explanation-button:hover {
+      background-color: #a35f00;
+    }
+
+    .dark-mode-button {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background-color: #222;
+      color: white;
+      padding: 10px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    .dark-mode-button:hover {
+      background-color: #444;
+    }
+  </style>
+</head>
+<body>
+  <div class="game-container">
+    <div class="title">Kanji Reading Practice</div>
+    <div class="note">(leave blank if none)</div>
+    <div id="kanji" class="hiragana"></div>
+    <div id="kanji-english" class="english-translation"></div>
+    
+    <!-- Separate input fields for On'yomi and Kun'yomi -->
+    <div>
+      <input type="text" id="kunyomiInput" class="input-field" placeholder="訓読み (Kun'yomi)">
+    </div>
+    <div>
+      <input type="text" id="onyomiInput" class="input-field" placeholder="音読み (On'yomi)">
+    </div>
+    
+    
+    <div id="result" class="result"></div>
+    <div id="remainingCount" class="remaining-count"></div>
+    <div id="finalResult" class="final-result"></div>
+    <a href="KanjiExplanation.html" class="button explanation-button">Explanation</a>
+    <a href="Howtouse.html" class="button">How to use</a>
+    <button id="restartButton" class="button restart-button">Restart</button>
+    <a href="practiceN5.html" class="button">Return</a>
+  </div>
+
+  <script>
+    const kanjiList = {
+      高: { onyomi: "こう", kunyomi: "たか、い", english: "high/tall" },
+      食: { onyomi: "しょく", kunyomi: "たべ、る", english: "eat/food" },
+      電: { onyomi: "でん", kunyomi: "", english: "electricity" },
+      雨: { onyomi: "う", kunyomi: "あめ", english: "rain" },
+間: { onyomi: "かん", kunyomi: "あいだ", english: "between/interval" },
+長: { onyomi: "ちょう", kunyomi: "なが、い", english: "long" },
+金: { onyomi: "きん", kunyomi: "かね", english: "gold/money" },
+車: { onyomi: "しゃ", kunyomi: "くるま", english: "car" },
+読: { onyomi: "どく", kunyomi: "よ、む", english: "read" },
+語: { onyomi: "ご", kunyomi: "かた、る", english: "language/speak" },
+話: { onyomi: "わ", kunyomi: "はな、す", english: "talk" },
+見: { onyomi: "けん", kunyomi: "み、る", english: "see" },
+西: { onyomi: "せい", kunyomi: "にし", english: "west" },
+行: { onyomi: "こう", kunyomi: "い、く", english: "go" },
+聞: { onyomi: "ぶん", kunyomi: "き、く", english: "hear" },
+百: { onyomi: "ひゃく", kunyomi: "", english: "hundred" },
+白: { onyomi: "はく", kunyomi: "しろ", english: "white" },
+男: { onyomi: "だん", kunyomi: "おとこ", english: "man" },
+生: { onyomi: "せい", kunyomi: "い、きる", english: "life/live" },
+父: { onyomi: "ふ", kunyomi: "ちち", english: "father" },
+火: { onyomi: "か", kunyomi: "ひ", english: "fire" },
+水: { onyomi: "すい", kunyomi: "みず", english: "water" },
+気: { onyomi: "き", kunyomi: "き", english: "spirit/energy" },
+毎: { onyomi: "まい", kunyomi: "ごと、に", english: "every" },
+母: { onyomi: "ぼ", kunyomi: "はは", english: "mother" },
+校: { onyomi: "こう", kunyomi: "", english: "school" },
+東: { onyomi: "とう", kunyomi: "ひがし", english: "east" },
+来: { onyomi: "らい", kunyomi: "く、る", english: "come" },
+本: { onyomi: "ほん", kunyomi: "もと", english: "book/origin" },
+木: { onyomi: "もく", kunyomi: "き", english: "tree" },
+月: { onyomi: "げつ", kunyomi: "つき", english: "moon" },
+書: { onyomi: "しょ", kunyomi: "か、く", english: "write" },
+時: { onyomi: "じ", kunyomi: "とき", english: "time" },
+日: { onyomi: "にち", kunyomi: "ひ", english: "day/sun" },
+後: { onyomi: "ご", kunyomi: "あと", english: "after" },
+年: { onyomi: "ねん", kunyomi: "とし", english: "year" },
+左: { onyomi: "さ", kunyomi: "ひだり", english: "left" },
+川: { onyomi: "", kunyomi: "かわ", english: "river" },
+山: { onyomi: "さん", kunyomi: "やま", english: "mountain" },
+小: { onyomi: "しょう", kunyomi: "こ", english: "small" },
+学: { onyomi: "がく", kunyomi: "まなぶ", english: "study" },
+子: { onyomi: "し", kunyomi: "こ", english: "child" },
+女: { onyomi: "じょ", kunyomi: "おんな", english: "woman" },
+天: { onyomi: "てん", kunyomi: "", english: "heaven/sky" },
+大: { onyomi: "だい", kunyomi: "おお、きい", english: "big" },
+外: { onyomi: "がい", kunyomi: "そと", english: "outside" },
+土: { onyomi: "ど", kunyomi: "つち", english: "earth/soil" },
+国: { onyomi: "こく", kunyomi: "くに", english: "country" },
+四: { onyomi: "し", kunyomi: "よっ、つ", english: "four" },
+名: { onyomi: "めい", kunyomi: "な", english: "name" },
+右: { onyomi: "う", kunyomi: "みぎ", english: "right" },
+友: { onyomi: "ゆう", kunyomi: "とも", english: "friend" },
+南: { onyomi: "なん", kunyomi: "みなみ", english: "south" },
+半: { onyomi: "はん", kunyomi: "なか、ば", english: "half" },
+午: { onyomi: "ご", kunyomi: "", english: "noon" },
+千: { onyomi: "せん", kunyomi: "ち", english: "thousand" },
+十: { onyomi: "じゅう", kunyomi: "とお", english: "ten" },
+北: { onyomi: "ほく", kunyomi: "きた", english: "north" },
+前: { onyomi: "ぜん", kunyomi: "まえ", english: "front" },
+出: { onyomi: "しゅつ", kunyomi: "で、る", english: "exit" },
+円: { onyomi: "えん", kunyomi: "まる", english: "yen/circle" },
+六: { onyomi: "ろく", kunyomi: "むっ、つ", english: "six" },
+八: { onyomi: "はち", kunyomi: "やっ、つ", english: "eight" },
+入: { onyomi: "にゅう", kunyomi: "はい、る", english: "enter" },
+先: { onyomi: "せん", kunyomi: "さき", english: "previous" },
+何: { onyomi: "なん", kunyomi: "なに", english: "what" },
+休: { onyomi: "きゅう", kunyomi: "やす、む", english: "rest" },
+今: { onyomi: "こん", kunyomi: "いま", english: "now" },
+人: { onyomi: "にん", kunyomi: "ひと", english: "person" },
+五: { onyomi: "ご", kunyomi: "いつ、つ", english: "five" },
+二: { onyomi: "に", kunyomi: "ふた、つ", english: "two" },
+九: { onyomi: "きゅう", kunyomi: "ここの、つ", english: "nine" },
+中: { onyomi: "ちゅう", kunyomi: "なか", english: "middle" },
+下: { onyomi: "か", kunyomi: "した", english: "down" },
+上: { onyomi: "じょう", kunyomi: "うえ", english: "up" },
+三: { onyomi: "さん", kunyomi: "みっ、つ", english: "three" },
+万: { onyomi: "まん", kunyomi: "", english: "ten thousand" },
+七: { onyomi: "しち", kunyomi: "なな、つ", english: "seven" },
+一: { onyomi: "いち", kunyomi: "ひと、つ", english: "one" }
+
+
+    };
+
+    let currentKanji = "";
+    let correctOnyomi = "";
+    let correctKunyomi = "";
+    let correctCount = 0;
+    let wrongCount = 0;
+    const totalKanji = Object.keys(kanjiList).length;
+
+    let wrongKanji = [];
+    let allAnswered = new Set();
+
+    function getRandomKanji() {
+      const unansweredKanji = Object.keys(kanjiList).filter(kanji => !allAnswered.has(kanji));
+      if (unansweredKanji.length === 0) {
+        return wrongKanji[Math.floor(Math.random() * wrongKanji.length)];
+      }
+      return unansweredKanji[Math.floor(Math.random() * unansweredKanji.length)];
+    }
+
+    function displayKanji() {
+      currentKanji = getRandomKanji();
+      const readings = kanjiList[currentKanji];
+      correctOnyomi = readings.onyomi;
+      correctKunyomi = readings.kunyomi;
+      document.getElementById("kanji").innerText = currentKanji;
+      document.getElementById("kanji-english").innerText = `(${readings.english})`;
+      document.getElementById("onyomiInput").value = '';
+      document.getElementById("kunyomiInput").value = '';
+      document.getElementById("result").innerText = '';
+      updateRemainingCount();
+    }
+
+    let isAnswerChecked = false;
+
+    function checkAnswer() {
+      const onyomiAnswer = document.getElementById("onyomiInput").value.trim().toLowerCase();
+      const kunyomiAnswer = document.getElementById("kunyomiInput").value.trim().toLowerCase();
+
+      let resultMessage = "";
+      let correctAnswerCount = 0;
+
+      if (onyomiAnswer === correctOnyomi) {
+        correctAnswerCount++;
+      } else {
+        resultMessage += `音読み (On'yomi) is incorrect. ❌<br>Correct answer: ${correctOnyomi}<br>`;
+      }
+
+      if (kunyomiAnswer === correctKunyomi) {
+        correctAnswerCount++;
+      } else {
+        resultMessage += `訓読み (Kun'yomi) is incorrect. ❌<br>Correct answer: ${correctKunyomi}<br>`;
+      }
+
+      if (correctAnswerCount === 2) {
+        resultMessage = "Correct! 🎉";
+        document.getElementById("result").style.color = "green";
+        correctCount++;
+        allAnswered.add(currentKanji);
+        const index = wrongKanji.indexOf(currentKanji);
+        if (index !== -1) {
+          wrongKanji.splice(index, 1);
+        }
+      } else {
+        document.getElementById("result").style.color = "red";
+      }
+
+      document.getElementById("result").innerHTML = resultMessage;
+
+      setTimeout(displayKanji, 1000); 
+    }
+
+    function updateRemainingCount() {
+      const remaining = totalKanji - correctCount;
+      document.getElementById("remainingCount").innerText = `Remaining: ${remaining} Kanji`;
+      if (remaining <= 0) {
+        document.getElementById("remainingCount").style.display = 'none';
+        document.getElementById("finalResult").innerText = "You finished the game! 🎉";
+        document.getElementById("finalResult").style.color = correctCount === totalKanji ? 'green' : 'red';
+        document.getElementById("result").style.display = 'none';
+        document.getElementById("onyomiInput").disabled = true;
+        document.getElementById("kunyomiInput").disabled = true;
+      }
+    }
+
+    function restartGame() {
+      correctCount = 0;
+      wrongCount = 0;
+      wrongKanji = [];
+      allAnswered.clear();
+      document.getElementById("finalResult").innerText = "";
+      document.getElementById("remainingCount").style.display = 'block';
+      document.getElementById("result").style.display = 'block';
+      document.getElementById("onyomiInput").disabled = false;
+      document.getElementById("kunyomiInput").disabled = false;
+      displayKanji();
+    }
+
+    // Initialize the game
+    displayKanji();
+
+    document.getElementById("onyomiInput").addEventListener("keydown", function(event) {
+      if (event.key === "Enter") {
+        checkAnswer();
+      }
+    });
+
+    document.getElementById("kunyomiInput").addEventListener("keydown", function(event) {
+      if (event.key === "Enter") {
+        checkAnswer();
+      }
+    });
+
+    // Add event listener to the restart button
+    document.getElementById("restartButton").addEventListener("click", restartGame);
+
+    if (localStorage.getItem('darkMode') === 'true') {
+      document.body.classList.add('dark-mode');
+    }
+  </script>
+</body>
+</html>

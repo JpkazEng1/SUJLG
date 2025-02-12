@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JLPT ゲームスタート画面</title>
+  <style>
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #98c1ff;
+  color: #000000;
+  display: flex;
+  flex-direction: column; /* 縦方向に配置 */
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* 高さを最小100vhにしてスクロール可能に */
+}
+
+    .game-container {
+      text-align: center;
+      background-color: #f0f0f0;
+      padding: 50px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 300px;
+    }
+
+    .title {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  white-space: nowrap; /* 追加 */
+}
+
+    .subtitle {
+      font-size: 18px;
+      margin-bottom: 30px;
+    }
+
+    button {
+      font-size: 18px;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 10px 0;
+      width: 100%;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .level-button {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    .level-button:hover {
+      background-color: #45a049;
+      transform: scale(1.05); /* Slightly increase the size on hover */
+    }
+
+    .toggle-button {
+      background-color: #2196F3;
+      color: white;
+    }
+
+    .toggle-button:hover {
+      background-color: #0b7dda;
+      transform: scale(1.05); /* Slightly increase the size on hover */
+    }
+
+    .result-button {
+      background-color: #FF9800;
+      color: white;
+    }
+
+    .result-button:hover {
+      background-color: #e68a00;
+      transform: scale(1.05); /* Slightly increase the size on hover */
+    }
+
+    .dark-mode {
+      background-color: #121212;
+      color: #ffffff;
+    }
+
+    .dark-mode .game-container {
+      background-color: #1f1f1f;
+    }
+
+    .dark-mode button {
+      background-color: #616161;
+    }
+
+    .dark-mode .level-button:hover {
+      background-color: #555555;
+    }
+
+    .dark-mode .result-button:hover {
+      background-color: #a35f00;
+    }
+
+    .dark-mode .toggle-button:hover {
+      background-color: #0b7dda;
+    }
+  </style>
+</head>
+<body>
+  <div class="game-container">
+    <div class="title">SUJLG</div>
+    <div class="subtitle">super ultra japanese language guide</div>
+
+    <button class="level-button" data-level="N5">JLPT N5</button>
+    <button class="level-button" data-level="N4">JLPT N4</button>
+    <button class="level-button" data-level="N3">JLPT N3</button>
+    <button class="level-button" data-level="N2">JLPT N2</button>
+    <button class="level-button" data-level="N1">JLPT N1</button>
+    <button class="level-button" data-level="EJU">EJU</button>
+    <button class="result-button" id="view-results">Your stats</button>
+    <button class="toggle-button" id="toggle-dark-mode">Dark mode</button>
+  </div>
+
+  <script>
+    // Load dark mode state from localStorage
+    const isDarkMode = localStorage.getItem('darkMode') === 'true';
+    if (isDarkMode) {
+      document.body.classList.add('dark-mode');
+    }
+
+    // Toggle dark mode
+    document.getElementById('toggle-dark-mode').addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+      localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+    });
+
+    // Handle level button clicks
+    document.querySelectorAll('.level-button').forEach(button => {
+      button.addEventListener('click', () => {
+        const level = button.dataset.level.toLowerCase();
+        window.location.href = `${level}_game.html`;
+      });
+    });
+
+    // Handle results button click
+    document.getElementById('view-results').addEventListener('click', () => {
+      window.location.href = 'results.html';
+    });
+  </script>
+</body>
+</html>

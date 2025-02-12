@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kanji Writing Practice</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #98c1ff;
+      color: #000000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .game-container {
+      text-align: center;
+      background-color: #f0f0f0;
+      padding: 50px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 300px;
+      transition: background-color 0.3s;
+    }
+
+    .title, #kanjiTitle, #currentKanjiDisplay {
+      font-size: 32px;
+      font-weight: bold;
+    }
+
+    .description {
+      font-size: 16px;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .dark-mode {
+      background-color: #121212;
+      color: #ffffff;
+    }
+
+    .dark-mode .game-container {
+      background-color: #1f1f1f;
+    }
+
+    canvas {
+      border: 2px solid #ffffff;
+      margin-top: 20px;
+      cursor: crosshair;
+    }
+
+    .button-container {
+      margin-top: 20px;
+    }
+
+    .action-button {
+      margin: 5px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .action-button:hover {
+      background-color: #0056b3;
+    }
+
+    .action-button#nextButton {
+      background-color: #28a745;
+    }
+
+    .action-button#nextButton:hover {
+      background-color: #218838;
+    }
+
+    .action-button#clearButton {
+      background-color: #dc3545;
+    }
+
+    .action-button#clearButton:hover {
+      background-color: #c82333;
+    }
+
+    #currentKanjiDisplay {
+      font-size: 48px;
+      margin-bottom: 10px;
+    }
+
+    #kanjiCounter {
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="game-container">
+    <div class="title" id="kanjiTitle">Write</div>
+    <div id="currentKanjiDisplay"></div>
+    <div id="kanjiCounter">Remaining Kanji: 50</div>
+    <canvas id="kanjiCanvas" width="280" height="280"></canvas>
+    <div class="button-container">
+      <button class="action-button" id="clearButton">Clear</button>
+      <button class="action-button" id="nextButton">Next</button>
+      <button class="action-button" id="returnButton">Return</button>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('kanjiCanvas');
+    const ctx = canvas.getContext('2d');
+    const currentKanjiDisplay = document.getElementById('currentKanjiDisplay');
+    const kanjiCounter = document.getElementById('kanjiCounter');
+    const clearButton = document.getElementById('clearButton');
+    const nextButton = document.getElementById('nextButton');
+    const returnButton = document.getElementById('returnButton');
+
+    const kanjiList = ['高', '食', '電', '雨', '間', '長', '金', '車', '読', '語', '話', '見', '西', '行', '聞', '百', '白', '男', '生', '父', '火', '水', '気', '毎', '母', '校', '東', '来', '本', '木', '月', '書', '時', '日', '後', '年', '左', '川', '山', '小', '学', '子', '女', '天', '大', '外', '土', '国', '四', '名', '右', '友', '南', '半', '午', '千', '十', '北', '前', '出', '円', '六', '八', '入', '先', '何', '休', '今', '人', '五', '二', '九', '中', '下', '上', '三', '万', '七', '一' ];
+    let currentKanjiIndex = 0;
+    let isDrawing = false;
+
+    ctx.lineWidth = 6;
+
+    // Function to set the pen color based on theme
+    function setPenColor() {
+      ctx.strokeStyle = document.body.classList.contains('dark-mode') ? '#ffffff' : '#000000';
+    }
+
+    // Update kanji display
+    function updateKanjiDisplay() {
+      currentKanjiDisplay.innerText = kanjiList[currentKanjiIndex];
+    }
+
+    // Update kanji counter
+    function updateKanjiCounter() {
+      kanjiCounter.innerText = `Remaining Kanji: ${kanjiList.length - currentKanjiIndex}`;
+    }
+
+    // Check if Kanji is drawn
+    function checkIfKanjiDrawn() {
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      return imageData.data.some((_, i) => i % 4 === 0 && imageData.data[i] !== 255);
+    }
+
+    // Event listeners for drawing
+    canvas.addEventListener('mousedown', (event) => {
+      isDrawing = true;
+      ctx.beginPath();
+      ctx.moveTo(event.offsetX, event.offsetY);
+    });
+
+    canvas.addEventListener('mousemove', (event) => {
+      if (isDrawing) {
+        ctx.lineTo(event.offsetX, event.offsetY);
+        ctx.stroke();
+      }
+    });
+
+    canvas.addEventListener('mouseup', () => isDrawing = false);
+
+    // Clear canvas
+    clearButton.addEventListener('click', () => ctx.clearRect(0, 0, canvas.width, canvas.height));
+
+    // Return to the previous page
+    returnButton.addEventListener('click', () => window.history.back());
+
+    // Move to the next kanji
+    nextButton.addEventListener('click', () => {
+      if (checkIfKanjiDrawn()) {
+        currentKanjiIndex++;
+        if (currentKanjiIndex < kanjiList.length) {
+          updateKanjiDisplay();
+          updateKanjiCounter();
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        } else {
+          alert('You have completed all the Kanji!');
+        }
+      } else {
+        alert('Please draw the kanji before proceeding.');
+      }
+    });
+
+    // Initialize the theme based on localStorage and set pen color
+    if (localStorage.getItem('darkMode') === 'true') {
+      document.body.classList.add('dark-mode');
+    }
+
+    // Set pen color on theme change
+    setPenColor();
+
+    // Initialize the game state
+    updateKanjiDisplay();
+    updateKanjiCounter();
+  </script>
+
+</body>
+</html>
