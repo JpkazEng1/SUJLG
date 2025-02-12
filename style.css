@@ -1,152 +1,149 @@
 body {
-    margin: 0;
-    font-family: 'Noto Serif JP', serif; 
-    background-color: #98c1ff;
-    color: #000000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 50vh; 
-    flex-direction: column; 
-    padding: 20px; 
-    box-sizing: border-box; 
-    overflow: auto; 
-    transition: background-color 0.3s, color 0.3s;
-    text-align: center;
-  }
-  
-  @media screen and (max-width: 480px) {
-    .game-container {
-      margin: 10px;
-      padding: 10px;
-    }
+  margin: 0;
+  font-family: 'Noto Serif JP', serif; 
+  background-color: #98c1ff;
+  color: #000000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 50vh; 
+  flex-direction: column; 
+  padding: 20px; 
+  box-sizing: border-box; 
+  overflow: auto; 
+  transition: background-color 0.3s, color 0.3s;
+  text-align: center;
+}
 
-    .title {
-      font-size: 18px;
-    }
-
-    .content {
-      font-size: 14px;
-    }
-
-    .return-button {
-      font-size: 14px;
-      padding: 10px;
-    }
-  }
-
+@media screen and (max-width: 480px) {
   .game-container {
-    text-align: center;
-    background-color: #ffffff;
-    padding: 50px;
-    border-radius: 5px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 80%;
-    max-width: 600px; 
-    transition: background-color 0.3s;
-    overflow-y: auto;
+    margin: 10px;
+    padding: 10px;
   }
 
   .title {
-    font-size: 33px;
-    font-weight: bold;
-    margin-bottom: 20px;
+    font-size: 18px;
   }
 
   .content {
-    font-size: 20px;
-    text-align: left;
-    white-space: pre-line;
+    font-size: 14px;
   }
 
   .return-button {
-    margin-top: 20px;
-    padding: 5px 20px;
-    font-size: 16px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    background-color: #007bff;
-    color: #ffffff;
+    font-size: 14px;
+    padding: 10px;
   }
+}
 
-  .return-button:hover {
-    background-color: #0056b3;
-  }
+.game-container {
+  text-align: center;
+  background-color: #ffffff;
+  padding: 50px;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 80%;
+  max-width: 600px; 
+  transition: background-color 0.3s;
+  overflow-y: auto;
+}
 
+.title {
+  font-size: 33px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
 
-  .dark-mode {
-    background-color: #121212;
-    color: #ffffff;
-  }
+.content {
+  font-size: 18px; /* Adjusted font size */
+  text-align: left;
+  white-space: pre-line;
+}
 
-  .dark-mode .game-container {
-    background-color: #1f1f1f;
-  }
+.return-button {
+  margin-top: 20px;
+  padding: 5px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #007bff;
+  color: #ffffff;
+}
 
-  .pronoun { background-color: purple; }
-  .noun { background-color: maroon; }
-  .particle { background-color: navy; }
-  .subject { background-color: rgb(209, 137, 137); padding: 10px; border-radius: 15px; }
-  .object { background-color: rgb(255, 0, 0); padding: 10px; border-radius: 15px; }
-  .predicate { background-color: rgb(124, 124, 212); padding: 10px; border-radius: 15px; }
-  .verb { background-color: green; }
-  .auxiliary-verb { background-color: lime; }
-  .adjective { background-color: orange; }
-  .adverb { background-color: yellow; }
-  .conjunction { background-color: pink; }
-  .interjection { background-color: rgb(165, 42, 42); }
-  .counter { background-color: blue; }
-  .suffix { background-color: teal; }
-  .prefix { background-color: cyan; }
-  .auxiliary { background-color: lime; }
-  .onomatopoeia { background-color: magenta; }
-  .phrase { background-color: gray; }
-  .expression { background-color: silver; }
- 
-  .tooltip {
-    position: relative;
-    display: inline-block;
-    cursor: pointer;
-    font-weight: normal; /* 通常は太字ではない */
-    margin-right: 10px; /* 単語間に間隔をあける */
-  }
-  
-  .tooltip:hover {
-    font-weight: 900; /* ホバー時にさらに太くする */
-    background-color: rgba(255, 255, 255, 0.3); /* 背景色を少し明るくする */
-    border-radius: 5px; /* 角を丸くする */
-  }
-  
-  .tooltip .tooltiptext {
-    visibility: hidden;
-    width: 200px;
-    background-color: #6c757d;
-    color: #fff;
-    text-align: center;
-    border-radius: 5px;
-    padding: 5px;
-    position: absolute;
-    z-index: 1;
-    bottom: 100%; /* Position it above the text */
-    left: 50%;
-    margin-left: -100px;
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-  
-  .tooltip:hover .tooltiptext {
-    visibility: visible;
-    opacity: 1;
-  }
-  
-  /* Adding styles for the clickable link */
-  .clickable {
-    text-decoration: none;
-    color: inherit;
-  }
-  
-  .content {
-    font-size: 18px; /* フォントサイズを調整 */
-  }
-  
+.return-button:hover {
+  background-color: #0056b3;
+}
+
+.dark-mode {
+  background-color: #121212;
+  color: #ffffff;
+}
+
+.dark-mode .game-container {
+  background-color: #1f1f1f;
+}
+
+.pronoun { background-color: purple; }
+.noun { background-color: maroon; }
+.particle { background-color: navy; }
+.subject, .object, .predicate {
+  padding: 10px;
+  border-radius: 15px;
+}
+.subject { background-color: rgb(209, 137, 137); }
+.object { background-color: rgb(255, 0, 0); }
+.predicate { background-color: rgb(124, 124, 212); }
+.verb { background-color: green; }
+.auxiliary-verb, .auxiliary { background-color: lime; }
+.adjective { background-color: orange; }
+.adverb { background-color: yellow; }
+.conjunction { background-color: pink; }
+.interjection { background-color: rgb(165, 42, 42); }
+.counter { background-color: blue; }
+.suffix { background-color: teal; }
+.prefix { background-color: cyan; }
+.onomatopoeia { background-color: magenta; }
+.phrase { background-color: gray; }
+.expression { background-color: silver; }
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  font-weight: normal; /* Usually not bold */
+  margin-right: 10px; /* Space between words */
+}
+
+.tooltip:hover {
+  font-weight: 900; /* Bolder on hover */
+  background-color: rgba(255, 255, 255, 0.3); /* Slightly lighter background */
+  border-radius: 5px; /* Rounded corners */
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 200px;
+  background-color: #6c757d;
+  color: #fff;
+  text-align: center;
+  border-radius: 5px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  bottom: 100%; /* Position it above the text */
+  left: 50%;
+  margin-left: -100px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Adding styles for the clickable link */
+.clickable {
+  text-decoration: none;
+  color: inherit;
+}
