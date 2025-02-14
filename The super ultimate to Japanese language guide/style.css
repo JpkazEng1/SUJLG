@@ -42,7 +42,7 @@ body {
     border-radius: 5px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     width: 80%;
-    max-width: 600px; 
+    max-width: 800; 
     transition: background-color 0.3s;
     overflow-y: auto;
   }
@@ -84,23 +84,4 @@ body {
     background-color: #1f1f1f;
   }
 
-  .pronoun { background-color: purple; }
-  .noun { background-color: maroon; }
-  .particle { background-color: navy; }
-  .subject { background-color: rgb(209, 137, 137); padding: 10px; border-radius: 15px; }
-  .object { background-color: rgb(255, 0, 0); padding: 10px; border-radius: 15px; }
-  .predicate { background-color: rgb(124, 124, 212); padding: 10px; border-radius: 15px; }
-  .verb { background-color: green; }
-  .auxiliary-verb { background-color: lime; }
-  .adjective { background-color: orange; }
-  .adverb { background-color: yellow; }
-  .conjunction { background-color: pink; }
-  .interjection { background-color: rgb(165, 42, 42); }
-  .counter { background-color: blue; }
-  .suffix { background-color: teal; }
-  .prefix { background-color: cyan; }
-  .auxiliary { background-color: lime; }
-  .onomatopoeia { background-color: magenta; }
-  .phrase { background-color: gray; }
-  .expression { background-color: silver; }
- 
+  

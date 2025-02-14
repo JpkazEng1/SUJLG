@@ -137,8 +137,9 @@ body {
     // Handle level button clicks
     document.querySelectorAll('.level-button').forEach(button => {
       button.addEventListener('click', () => {
+        const folder_level = button.dataset.level;
         const level = button.dataset.level.toLowerCase();
-        window.location.href = `${level}_game.html`;
+        window.location.href = `${folder_level}/${level}_game.html`;
       });
     });
 
