@@ -1,0 +1,159 @@
+body {
+    margin: 0;
+    font-family: serif;
+    background-color: #98c1ff;
+    color: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 50vh;
+    flex-direction: column;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow: auto;
+    transition: background-color 0.3s, color 0.3s;
+    position: relative;
+}
+
+#game-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100px;
+    position: relative; /* Important for modal positioning */
+    background-color: #fff;
+    padding: 50px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 80%;
+    max-width: 90%;
+    transition: background-color 0.3s;
+    overflow-y: auto;
+    font-size: 18px;
+    line-height: 40px;
+}
+
+#game-container > *:not(.return-button) {
+    flex-grow: 1;
+}
+
+.title {
+    font-size: 33px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    font-weight: normal;
+    margin-right: 10px;
+    text-decoration: none;
+    color: inherit;
+}
+
+.tooltip:hover {
+    font-weight: 900;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 5px;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 200px;
+    background-color: #6c757d;
+    color: #fff;
+    text-align: center;
+    border-radius: 5px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -100px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    white-space: pre-wrap;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+
+.return-button {
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    text-align: center;
+    display: block;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed; /* Changed to fixed */
+    z-index: 1;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
+    max-width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    top: 50% !important; /* Center vertically */
+    left: 90% !important; /* Center horizontally */
+    transform: translate(-50%, -50%); /* Adjust for centering */
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 0; /* Remove default margin */
+    padding: 20px;
+    border: 1px solid #888;
+    width: auto; /* Or a specific width if you prefer */
+    position: relative; /* For positioning the close button */
+}
+
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+/* Media query styles */
+@media screen and (max-width: 480px) {
+    #game-container {
+        margin: 10px;
+        padding: 10px;
+        font-size: 16px;
+    }
+
+    .title {
+        font-size: 18px;
+    }
+
+    .tooltip .tooltiptext {
+        font-size: 14px;
+        width: 150px;
+        margin-left: -75px;
+    }
+
+    .return-button {
+        font-size: 14px;
+        padding: 10px;
+    }
+
+        .modal {
+        max-width: 90%; /* Adjust modal width for smaller screens */
+        top: 50%; /* Vertically center the modal */
+        left: 50%; /* Horizontally center the modal */
+        transform: translate(-50%, -50%); /* Center the modal precisely */
+    }
+}

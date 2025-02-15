@@ -139,7 +139,7 @@ body {
       button.addEventListener('click', () => {
         const folder_level = button.dataset.level;
         const level = button.dataset.level.toLowerCase();
-        window.location.href = `${folder_level}/${level}_game.html`;
+        button.dataset.level == 'EJU' ? window.location.href = `${folder_level}/${level}_game.html` : window.location.href = `JLPT/${folder_level}/${level}_game.html`; 
       });
     });
 
