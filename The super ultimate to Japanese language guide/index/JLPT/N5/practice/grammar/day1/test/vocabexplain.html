@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>N5 Day1</title>
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+    <div id="game-container">
+        <div class="title">～日本語を勉強している君へ～</div>
+        プロローグ
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <div id="modal-content"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import japaneseText from './japaneseText.js';
+        import wordTooltips from './wordTooltips.js';
+        import vocabulary from './vocabulary.js';
+
+        function closeModal() {
+            const modal = document.getElementById('modal');
+            modal.style.display = 'none';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const closeButton = document.querySelector('.close-button');
+            if (closeButton) {
+                closeButton.addEventListener('click', closeModal);
+            }
+        });
+
+        function createClickableTooltipText(text, tooltip, wordData) {
+            const span = document.createElement('span');
+            span.className = 'tooltip clickable';
+            span.textContent = text;
+
+            const tooltiptext = document.createElement('span');
+            tooltiptext.className = 'tooltiptext';
+            tooltiptext.textContent = tooltip;
+            span.appendChild(tooltiptext);
+
+            span.addEventListener('click', () => {
+                openModal(wordData);
+            });
+
+            return span;
+        }
+
+        function normalizeJapaneseText(text) {
+            text = text.replace(/っ$/g, "つ");
+            text = text.replace(/^っ$/g, "つ");
+            text = text.replace(/ゃ$/g, "や");
+            text = text.replace(/^ゃ$/g, "や");
+            text = text.replace(/ゅ$/g, "ゆ");
+            text = text.replace(/^ゅ$/g, "ゆ");
+            text = text.replace(/ょ$/g, "よ");
+            text = text.replace(/^ょ$/g, "よ");
+
+            text = text.replace(/ッ$/g, "ツ");
+            text = text.replace(/^ッ$/g, "ツ");
+            text = text.replace(/ャ$/g, "ヤ");
+            text = text.replace(/^ャ$/g, "ヤ");
+            text = text.replace(/ュ$/g, "ユ");
+            text = text.replace(/^ュ$/g, "ユ");
+            text = text.replace(/ョ$/g, "ヨ");
+            text = text.replace(/^ョ$/g, "ヨ");
+
+            text = text.replace(/ー$/g, "");
+            text = text.replace(/^ー$/g, "");
+
+            return text;
+        }
+
+        const textContainer = document.getElementById('game-container');
+        const paragraphs = japaneseText.trim().split('\n\n');
+
+        paragraphs.forEach(paragraph => {
+            const p = document.createElement('p');
+            const wordsWithPunctuation = paragraph.split(/([ \u3000.,!?、。？！「」『』（）()【】〔〕［］｛｝<>《》«»“”‘’'’"”„‟"、，・]+)/);
+
+            wordsWithPunctuation.forEach(wordWithPunctuation => {
+                let currentWord = "";
+                let currentPunctuation = "";
+
+                for (let i = 0; i < wordWithPunctuation.length; i++) {
+                    const char = wordWithPunctuation[i];
+                    if (/[.,!?、。？！「」『』（）()【】〔〕［］｛｝<>《》«»“”‘’'’"”„‟"、，]/.test(char)) {
+                        processWord(currentWord, currentPunctuation);
+                        currentWord = "";
+                        currentPunctuation = char;
+                    } else {
+                        currentWord += char;
+                    }
+                }
+
+                processWord(currentWord, currentPunctuation);
+
+                function processWord(word, punctuation) {
+                    let trimmedWord = word.trim();
+
+                    if (trimmedWord === "") {
+                        p.appendChild(document.createTextNode(word + punctuation));
+                        return;
+                    }
+
+                    trimmedWord = normalizeJapaneseText(trimmedWord);
+
+                    const tooltip = wordTooltips[trimmedWord];
+                    const wordData = {
+                        word: trimmedWord,
+                        tooltip: tooltip || "情報がありません",
+                    };
+
+                    if (tooltip) {
+                        p.appendChild(createClickableTooltipText(word + punctuation, tooltip, wordData));
+                    } else {
+                        p.appendChild(document.createTextNode(word + punctuation));
+                    }
+                }
+            });
+            textContainer.appendChild(p);
+        });
+
+        const returnButton = document.createElement('button');
+        returnButton.className = 'return-button';
+        returnButton.textContent = 'Return';
+        returnButton.onclick = () => window.history.back();
+        textContainer.appendChild(returnButton);
+
+        function openModal(wordData) {
+            const modal = document.getElementById('modal');
+            const modalContent = document.getElementById('modal-content');
+
+            const wordInfo = vocabulary.vocabulary.find(item => item.title === wordData.word);
+
+            if (wordInfo) {
+                modalContent.innerHTML = `
+                    <h2>${wordInfo.title}</h2>
+                    <p>Meaning: ${wordInfo.content.definition.meaning}</p>
+                    <p>Example: ${wordInfo.content.example.phrase}</p>
+                    <p>Translation: ${wordInfo.content.example.translation}</p>
+                `;
+            } else {
+                modalContent.innerHTML = `
+                    <h2><span class="math-inline">\{wordData\.word\}</h2\>
+                    <p>{wordData.tooltip}</p>
+                    <p>(You can add more information here)</p>
+                `;
+            }
+
+            const gameContainer = document.getElementById('game-container');
+            const gameContainerRect = gameContainer.getBoundingClientRect();
+
+            modal.style.left = `${gameContainerRect.right + 10}px`;
+            modal.style.top = `${gameContainerRect.top}px`;
+            modal.style.display = 'block';
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('modal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
