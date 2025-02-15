@@ -20,15 +20,18 @@
     </div>
 
     <script type="module">
-        import japaneseText from './japaneseText.js';
-        import wordTooltips from './wordTooltips.js';
-        import vocabulary from './vocabulary.js';
+        // Import necessary data and functions from external files.
+        import japaneseText from './japaneseText.js'; // Text content for the game
+        import wordTooltips from './wordTooltips.js'; // Tooltip information for words
+        import vocabulary from './vocabulary.js';    // Vocabulary data for modal
 
+        // Function to close the modal.
         function closeModal() {
             const modal = document.getElementById('modal');
             modal.style.display = 'none';
         }
 
+        // Add event listener for DOMContentLoaded to ensure the DOM is fully loaded.
         document.addEventListener('DOMContentLoaded', () => {
             const closeButton = document.querySelector('.close-button');
             if (closeButton) {
@@ -36,109 +39,122 @@
             }
         });
 
+        // Function to create a clickable tooltip text element.
         function createClickableTooltipText(text, tooltip, wordData) {
             const span = document.createElement('span');
-            span.className = 'tooltip clickable';
-            span.textContent = text;
+            span.className = 'tooltip clickable'; // Add CSS classes for styling
+            span.textContent = text; // Set the text content of the span
 
             const tooltiptext = document.createElement('span');
-            tooltiptext.className = 'tooltiptext';
-            tooltiptext.textContent = tooltip;
-            span.appendChild(tooltiptext);
+            tooltiptext.className = 'tooltiptext'; // Add CSS class for tooltip styling
+            tooltiptext.textContent = tooltip; // Set the tooltip text
+            span.appendChild(tooltiptext); // Add the tooltip to the span
 
+            // Add event listener to open the modal when the span is clicked.
             span.addEventListener('click', () => {
                 openModal(wordData);
             });
 
-            return span;
+            return span; // Return the created span element
         }
 
+        // Function to normalize Japanese text (remove trailing or leading small characters).
         function normalizeJapaneseText(text) {
-            text = text.replace(/っ$/g, "つ");
-            text = text.replace(/^っ$/g, "つ");
-            text = text.replace(/ゃ$/g, "や");
-            text = text.replace(/^ゃ$/g, "や");
-            text = text.replace(/ゅ$/g, "ゆ");
-            text = text.replace(/^ゅ$/g, "ゆ");
-            text = text.replace(/ょ$/g, "よ");
-            text = text.replace(/^ょ$/g, "よ");
+            text = text.replace(/っ$/g, "つ"); // Replace trailing small "っ" with "つ"
+            text = text.replace(/^っ$/g, "つ"); // Replace leading small "っ" with "つ"
+            text = text.replace(/ゃ$/g, "や"); // Replace trailing small "ゃ" with "や"
+            text = text.replace(/^ゃ$/g, "や"); // Replace leading small "ゃ" with "や"
+            text = text.replace(/ゅ$/g, "ゆ"); // Replace trailing small "ゅ" with "ゆ"
+            text = text.replace(/^ゅ$/g, "ゆ"); // Replace leading small "ゅ" with "ゆ"
+            text = text.replace(/ょ$/g, "よ"); // Replace trailing small "ょ" with "よ"
+            text = text.replace(/^ょ$/g, "よ"); // Replace leading small "ょ" with "よ"
 
-            text = text.replace(/ッ$/g, "ツ");
-            text = text.replace(/^ッ$/g, "ツ");
-            text = text.replace(/ャ$/g, "ヤ");
-            text = text.replace(/^ャ$/g, "ヤ");
-            text = text.replace(/ュ$/g, "ユ");
-            text = text.replace(/^ュ$/g, "ユ");
-            text = text.replace(/ョ$/g, "ヨ");
-            text = text.replace(/^ョ$/g, "ヨ");
+            text = text.replace(/ッ$/g, "ツ"); // Replace trailing small "ッ" with "ツ"
+            text = text.replace(/^ッ$/g, "ツ"); // Replace leading small "ッ" with "ツ"
+            text = text.replace(/ャ$/g, "ヤ"); // Replace trailing small "ャ" with "ヤ"
+            text = text.replace(/^ャ$/g, "ヤ"); // Replace leading small "ャ" with "ヤ"
+            text = text.replace(/ュ$/g, "ユ"); // Replace trailing small "ュ" with "ユ"
+            text = text.replace(/^ュ$/g, "ユ"); // Replace leading small "ュ" with "ユ"
+            text = text.replace(/ョ$/g, "ヨ"); // Replace trailing small "ョ" with "ヨ"
+            text = text.replace(/^ョ$/g, "ヨ"); // Replace leading small "ョ" with "ヨ"
 
-            text = text.replace(/ー$/g, "");
-            text = text.replace(/^ー$/g, "");
+            text = text.replace(/ー$/g, ""); // Remove trailing long sound symbol "ー"
+            text = text.replace(/^ー$/g, ""); // Remove leading long sound symbol "ー"
 
-            return text;
+            return text; // Return the normalized text
         }
 
+        // Get the game container element.
         const textContainer = document.getElementById('game-container');
+        // Split the Japanese text into paragraphs.
         const paragraphs = japaneseText.trim().split('\n\n');
 
+        // Iterate over each paragraph.
         paragraphs.forEach(paragraph => {
-            const p = document.createElement('p');
+            const p = document.createElement('p'); // Create a new paragraph element
+            // Split the paragraph into words and punctuation.
             const wordsWithPunctuation = paragraph.split(/([ \u3000.,!?、。？！「」『』（）()【】〔〕［］｛｝<>《》«»“”‘’'’"”„‟"、，・]+)/);
 
+            // Iterate over each word and punctuation.
             wordsWithPunctuation.forEach(wordWithPunctuation => {
-                let currentWord = "";
-                let currentPunctuation = "";
+                let currentWord = ""; // Initialize current word variable
+                let currentPunctuation = ""; // Initialize current punctuation variable
 
+                // Iterate over each character in the word or punctuation.
                 for (let i = 0; i < wordWithPunctuation.length; i++) {
-                    const char = wordWithPunctuation[i];
+                    const char = wordWithPunctuation[i]; // Get the current character
+                    // Check if the character is a punctuation mark.
                     if (/[.,!?、。？！「」『』（）()【】〔〕［］｛｝<>《》«»“”‘’'’"”„‟"、，]/.test(char)) {
-                        processWord(currentWord, currentPunctuation);
-                        currentWord = "";
-                        currentPunctuation = char;
+                        processWord(currentWord, currentPunctuation); // Process the current word
+                        currentWord = ""; // Reset the current word
+                        currentPunctuation = char; // Set the current punctuation
                     } else {
-                        currentWord += char;
+                        currentWord += char; // Add the character to the current word
                     }
                 }
 
-                processWord(currentWord, currentPunctuation);
+                processWord(currentWord, currentPunctuation); // Process the last word
 
+                // Function to process each word.
                 function processWord(word, punctuation) {
-                    let trimmedWord = word.trim();
+                    let trimmedWord = word.trim(); // Trim whitespace from the word
 
                     if (trimmedWord === "") {
-                        p.appendChild(document.createTextNode(word + punctuation));
+                        p.appendChild(document.createTextNode(word + punctuation)); // Add whitespace/punctuation directly
                         return;
                     }
 
-                    trimmedWord = normalizeJapaneseText(trimmedWord);
+                    trimmedWord = normalizeJapaneseText(trimmedWord); // Normalize the word
 
-                    const tooltip = wordTooltips[trimmedWord];
+                    const tooltip = wordTooltips[trimmedWord]; // Get the tooltip for the word
                     const wordData = {
-                        word: trimmedWord,
-                        tooltip: tooltip || "情報がありません",
+                        word: trimmedWord, // Store the word
+                        tooltip: tooltip || "情報がありません", // Store the tooltip or a default message
                     };
 
                     if (tooltip) {
-                        p.appendChild(createClickableTooltipText(word + punctuation, tooltip, wordData));
+                        p.appendChild(createClickableTooltipText(word + punctuation, tooltip, wordData)); // Add clickable tooltip text
                     } else {
-                        p.appendChild(document.createTextNode(word + punctuation));
+                        p.appendChild(document.createTextNode(word + punctuation)); // Add regular text
                     }
                 }
             });
-            textContainer.appendChild(p);
+            textContainer.appendChild(p); // Add the paragraph to the container
         });
 
+        // Create and add a return button.
         const returnButton = document.createElement('button');
-        returnButton.className = 'return-button';
-        returnButton.textContent = 'Return';
-        returnButton.onclick = () => window.history.back();
-        textContainer.appendChild(returnButton);
+        returnButton.className = 'return-button'; // Add a CSS class for styling
+        returnButton.textContent = 'Return'; // Set the button text
+        returnButton.onclick = () => window.history.back(); // Add onclick functionality
+        textContainer.appendChild(returnButton); // Add the button to the container
 
+        // Function to open the modal.
         function openModal(wordData) {
-            const modal = document.getElementById('modal');
-            const modalContent = document.getElementById('modal-content');
+            const modal = document.getElementById('modal'); // Get the modal element
+            const modalContent = document.getElementById('modal-content'); // Get the modal content element
 
-            const wordInfo = vocabulary.vocabulary.find(item => item.title === wordData.word);
+            const wordInfo = vocabulary.vocabulary.find(item => item.title === wordData.word); // Find word info in vocabulary
 
             if (wordInfo) {
                 modalContent.innerHTML = `
@@ -146,23 +162,25 @@
                     <p>Meaning: ${wordInfo.content.definition.meaning}</p>
                     <p>Example: ${wordInfo.content.example.phrase}</p>
                     <p>Translation: ${wordInfo.content.example.translation}</p>
-                `;
+                `; // Set modal content from vocabulary data
             } else {
                 modalContent.innerHTML = `
                     <h2><span class="math-inline">\{wordData\.word\}</h2\>
-                    <p>{wordData.tooltip}</p>
+                    <p\></span>{wordData.tooltip}</p>
                     <p>(You can add more information here)</p>
-                `;
+                `; // Set modal content from tooltip data
             }
 
-            const gameContainer = document.getElementById('game-container');
-            const gameContainerRect = gameContainer.getBoundingClientRect();
+            const gameContainer = document.getElementById('game-container'); // Get game container for positioning
+            const gameContainerRect = gameContainer.getBoundingClientRect(); // Get game container dimensions
 
-            modal.style.left = `${gameContainerRect.right + 10}px`;
-            modal.style.top = `${gameContainerRect.top}px`;
-            modal.style.display = 'block';
+            // Position and display
+            modal.style.left = `${gameContainerRect.right + 10}px`; // Position to the right of game container
+            modal.style.top = `${gameContainerRect.top}px`; // Position at the top of game container
+            modal.style.display = 'block'; // Display the modal
         }
 
+        // Close the modal if the user clicks outside the modal content.
         window.onclick = function(event) {
             const modal = document.getElementById('modal');
             if (event.target == modal) {
