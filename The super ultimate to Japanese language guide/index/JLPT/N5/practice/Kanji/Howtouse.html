@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How to use</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #98c1ff;
+      color: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .game-container {
+      text-align: center;
+      background-color: #f0f0f0;
+      padding: 2em;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 90%;
+      max-width: 400px;
+      min-height: 300px;
+      position: relative;
+      transition: background-color 0.3s;
+    }
+
+    .title {
+      font-size: 2em;
+      font-weight: bold;
+      margin-bottom: 1em;
+    }
+
+    .description {
+      font-size: 1em;
+      margin-bottom: 1em;
+      line-height: 1.5;
+    }
+
+    .katakana { color: #ff6347; font-weight: bold; }
+    .hiragana { color: #4682b4; font-weight: bold; }
+    .kanji { color: #32cd32; font-weight: bold; }
+
+    .dark-mode { background-color: #121212; color: #fff; }
+    .dark-mode .game-container { background-color: #1f1f1f; }
+
+    .return-button {
+      margin-top: 1em;
+      padding: 0.5em 1em;
+      font-size: 1em;
+      border: none;
+      border-radius: 5px;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      position: absolute;
+      bottom: 1em;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .return-button:hover { background-color: #0056b3; }
+
+    /* 画像がコンテナからはみ出ないようにするスタイル */
+    .game-container img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="game-container">
+    <div class="title">How to use</div>
+    <img src="../../../../images/Kanji Reading Practice how to use.png" alt="How to use Kanji Reading Practice" />
+    <button class="return-button" onclick="goBack()">Return</button>
+  </div>
+
+  <script>
+    // Apply dark mode if enabled
+    const isDarkMode = localStorage.getItem('darkMode') === 'true';
+    if (isDarkMode) document.body.classList.add('dark-mode');
+
+    // Function to navigate back
+    function goBack() {
+      window.history.back();
+    }
+  </script>
+
+</body>
+</html>

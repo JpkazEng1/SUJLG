@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hiragana Typing Practice</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #98c1ff;
+      color: #000000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .game-container {
+      text-align: center;
+      background-color: #f0f0f0;
+      padding: 50px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 300px;
+      transition: background-color 0.3s;
+    }
+
+    .title {
+      font-size: 32px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .instruction {
+      font-size: 16px;
+      margin-bottom: 20px;
+      color: #ffffff;
+    }
+
+    .button {
+      display: inline-block;
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      margin: 10px;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .button:hover {
+      background-color: #45a049;
+      transform: scale(1.05); /* Slightly increase the size on hover */
+    }
+
+    .restart-button {
+      background-color: #f44336;
+    }
+
+    .restart-button:hover {
+      background-color: #e53935;
+      transform: scale(1.05); /* Slightly increase the size on hover */
+    }
+
+    body.dark-mode {
+      background-color: #121212;
+      color: #ffffff;
+    }
+
+    body.dark-mode .game-container {
+      background-color: #1f1f1f;
+    }
+
+    .hiragana {
+      font-size: 50px;
+      margin-bottom: 20px;
+    }
+
+    .input-field {
+      padding: 10px;
+      font-size: 27px;
+      width: 100%;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .result {
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .remaining-count {
+      font-size: 18px;
+      margin-top: 10px;
+    }
+
+    .final-result {
+      font-size: 24px;
+      margin-top: 20px;
+      color: #4CAF50;
+    }
+
+    .explanation-button {
+      background-color: #e68a00; /* Set the background color to orange */
+      color: white; /* Adjust text color for better contrast */
+    }
+  
+    .explanation-button:hover {
+      background-color: #a35f00; /* Slightly darker shade for hover effect */
+      transform: scale(1.05); /* Slightly increase the size on hover */
+    }
+  </style>
+</head>
+<body>
+  <div class="game-container">
+    <div class="title">Hiragana Typing Practice</div>
+    <div class="instruction">After answering the question, press the enter key</div> <!-- Added instruction -->
+    <div id="hiragana" class="hiragana"></div>
+    <input type="text" id="userInput" class="input-field" placeholder="Enter reading here">
+    <div id="result" class="result"></div>
+    <div id="remainingCount" class="remaining-count"></div>
+    <div id="finalResult" class="final-result"></div>
+    <a href="Hiragana_explanation.html" class="button explanation-button">Explanation</a>
+    <!-- Restart Button -->
+    <button id="restartButton" class="button restart-button">Restart</button>
+    <a href="../practiceN5.html" class="button">Return</a>
+  </div>
+
+  <script>
+    const hiraganaList = {
+      あ: "a", い: "i", う: "u", え: "e", お: "o",か: "ka", き: "ki", く: "ku", け: "ke", こ: "ko",
+        さ: "sa", し: "si", す: "su", せ: "se", そ: "so",
+        た: "ta", ち: "ti", つ: "tu", て: "te", と: "to",
+        な: "na", に: "ni", ぬ: "nu", ね: "ne", の: "no",
+        は: "ha", ひ: "hi", ふ: "fu", へ: "he", ほ: "ho",
+        ま: "ma", み: "mi", む: "mu", め: "me", も: "mo",
+        や: "ya", ゆ: "yu", よ: "yo",
+        ら: "ra", り: "ri", る: "ru", れ: "re", ろ: "ro",
+        わ: "wa", を: "wo", ん: "nn",
+        が: "ga", ぎ: "gi", ぐ: "gu", げ: "ge", ご: "go",
+        ざ: "za", じ: "zi", ず: "zu", ぜ: "ze", ぞ: "zo",
+        だ: "da", ぢ: "di", づ: "du", で: "de", ど: "do",
+        ば: "ba", び: "bi", ぶ: "bu", べ: "be", ぼ: "bo",
+        ぱ: "pa", ぴ: "pi", ぷ: "pu", ぺ: "pe", ぽ: "po",
+        きゃ: "kya", きゅ: "kyu", きょ: "kyo",
+        しゃ: "sha", しゅ: "shu", しょ: "sho",
+        ちゃ: "cha", ちゅ: "chu", ちょ: "cho",
+        にゃ: "nya", にゅ: "nyu", にょ: "nyo",
+        ひゃ: "hya", ひゅ: "hyu", ひょ: "hyo",
+        みゃ: "mya", みゅ: "myu", みょ: "myo",
+        りゃ: "rya", りゅ: "ryu", りょ: "ryo",
+        ぎゃ: "gya", ぎゅ: "gyu", ぎょ: "gyo",
+        じゃ: "ja", じゅ: "ju", じょ: "jo",
+        びゃ: "bya", びゅ: "byu", びょ: "byo",
+        ぴゃ: "pya", ぴゅ: "pyu", ぴょ: "pyo"
+    };
+
+    let currentHiragana = "";
+    let correctAnswer = "";
+    let correctCount = 0;
+    let wrongCount = 0;
+    const totalHiragana = Object.keys(hiraganaList).length;
+
+    let wrongHiragana = [];
+    let allAnswered = new Set();  // 追加: すべて出題されたひらがなを記録
+
+    function getRandomHiragana() {
+      // 出題されていないひらがなを取得する
+      const unansweredHiragana = Object.keys(hiraganaList).filter(hiragana => !allAnswered.has(hiragana));
+      
+      // すべてのひらがなが出題された場合は、間違えたひらがなを出題
+      if (unansweredHiragana.length === 0) {
+        return wrongHiragana[Math.floor(Math.random() * wrongHiragana.length)];
+      }
+      
+      // 未出題のひらがなからランダムに選ぶ
+      return unansweredHiragana[Math.floor(Math.random() * unansweredHiragana.length)];
+    }
+
+    function displayHiragana() {
+      currentHiragana = getRandomHiragana();
+      correctAnswer = hiraganaList[currentHiragana];
+      document.getElementById("hiragana").innerText = currentHiragana;
+      document.getElementById("userInput").value = '';
+      document.getElementById("result").innerText = '';
+      updateRemainingCount();
+    }
+
+    function checkAnswer() {
+      const userAnswer = document.getElementById("userInput").value.trim().toLowerCase();
+      if (userAnswer === correctAnswer) {
+        document.getElementById("result").innerText = "Correct! 🎉";
+        document.getElementById("result").style.color = "green";
+        correctCount++;
+
+        // 正解したひらがなを記録
+        allAnswered.add(currentHiragana);
+
+        // 間違えたひらがなから削除
+        const index = wrongHiragana.indexOf(currentHiragana);
+        if (index !== -1) {
+          wrongHiragana.splice(index, 1);
+        }
+      } else {
+        document.getElementById("result").innerText = "Try again! ❌";
+        document.getElementById("result").style.color = "red";
+        wrongCount++;
+
+        if (!wrongHiragana.includes(currentHiragana)) {
+          wrongHiragana.push(currentHiragana);
+        }
+      }
+      setTimeout(displayHiragana, 1000); // 1秒後に次の問題を表示
+    }
+
+    function updateRemainingCount() {
+      const remaining = totalHiragana - correctCount;
+      document.getElementById("remainingCount").innerText = `Remaining: ${remaining} Hiragana`;
+
+      // すべてのひらがなを正解した場合
+      if (remaining <= 0) {
+        document.getElementById("remainingCount").style.display = 'none';  // 残り問題数を非表示
+        document.getElementById("finalResult").innerText = `You finished the game! 🎉`;
+        document.getElementById("finalResult").style.color = correctCount === totalHiragana ? 'green' : 'red';
+        document.getElementById("result").style.display = 'none'; // 結果非表示
+        document.getElementById("userInput").disabled = true; // 入力欄を無効にする
+      }
+    }
+
+    function restartGame() {
+      // Reset the game state
+      correctCount = 0;
+      wrongCount = 0;
+      wrongHiragana = [];
+      allAnswered.clear();
+      document.getElementById("finalResult").innerText = "";
+      document.getElementById("remainingCount").style.display = 'block';
+      document.getElementById("result").style.display = 'block';
+      document.getElementById("userInput").disabled = false;
+      displayHiragana();
+    }
+
+    // Initialize the game
+    displayHiragana();
+
+    document.getElementById("userInput").addEventListener("keydown", function(event) {
+      if (event.key === "Enter") {
+        checkAnswer();
+      }
+    });
+
+    // Add event listener to the restart button
+    document.getElementById("restartButton").addEventListener("click", restartGame);
+
+    if (localStorage.getItem('darkMode') === 'true') {
+      document.body.classList.add('dark-mode');
+    }
+  </script>
+</body>
+</html>

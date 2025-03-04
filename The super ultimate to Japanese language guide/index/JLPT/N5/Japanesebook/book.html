@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Style Example with TOC</title>
+  <style>
+    /* デフォルトのライトモード */
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #98c1ff;
+      color: #000000; /* Text color is black in light mode */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      flex-direction: column;
+      padding: 20px;
+      box-sizing: border-box;
+      overflow: auto;
+    }
+
+    .book-container {
+      text-align: center;
+      background-color: #f0f0f0;
+      padding: 50px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 600px;
+      transition: background-color 0.3s;
+      position: relative;
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    .title {
+      font-size: 36px; /* Increased font size */
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #000000; /* Text color is black in light mode */
+    }
+
+    .description {
+      font-size: 18px; /* Increased font size */
+      margin-bottom: 20px;
+      line-height: 1.5;
+      text-align: left;
+      color: #000000; /* Text color is black in light mode */
+    }
+
+    .highlight {
+      color: #30ff53;
+      font-weight: bold;
+    }
+
+    .dark-mode {
+      background-color: #121212;
+      color: #ffffff; /* Text color is white in dark mode */
+    }
+
+    .dark-mode .book-container {
+      background-color: #1f1f1f;
+    }
+
+    .return-button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .return-button:hover {
+      background-color: #0056b3;
+    }
+
+    .nav-buttons {
+      margin-top: 20px;
+    }
+
+    .nav-button {
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      margin: 0 10px;
+    }
+
+    .nav-button:hover {
+      background-color: #0056b3;
+    }
+
+    .toc-list {
+      text-align: left;
+      margin: 20px 0;
+    }
+
+    .toc-list a {
+      color: #007bff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .toc-list a:hover {
+      text-decoration: underline;
+    }
+
+    .back-to-toc {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      background-color: #28a745; /* Green color */
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .back-to-toc:hover {
+      background-color: #218838; /* Darker green on hover */
+    }
+
+    .alphabet-placeholder {
+      border: 2px dashed #007bff;
+      padding: 20px;
+      margin: 15px 0;
+      text-align: center;
+      font-style: italic;
+      color: #000000; /* Text color is black in light mode */
+    }
+
+    .alphabet-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-family: "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      font-size: 16px; /* Increased font size */
+    }
+
+    .alphabet-table th, .alphabet-table td {
+      border: 1px solid #2e2c2c;
+      padding: 8px;
+      text-align: center;
+      transition: background-color 0.3s ease;
+      color: #000000; /* Text color is black in light mode */
+    }
+
+    .alphabet-table th {
+      background-color: #007bff;
+      color: #ffffff; /* Header text color is white */
+      font-weight: bold;
+    }
+
+    .alphabet-table td {
+      background-color: #f0f0f0; /* Light gray background for table cells */
+    }
+
+    .alphabet-table tr:hover td {
+      background-color: #e0e0e0; /* Slightly darker gray on hover */
+    }
+
+    .alphabet-section h2 {
+      font-size: 28px; /* Increased font size */
+      color: #007bff;
+      margin-bottom: 15px;
+    }
+
+    .alphabet-section p {
+      font-size: 18px; /* Increased font size */
+      line-height: 1.6;
+      color: #000000; /* Text color is black in light mode */
+    }
+
+    .alphabet-section .highlight {
+      color: #20b358;
+      font-weight: bold;
+    }
+
+    .dark-mode-toggle {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding: 10px; /* Adjusted padding for a circle */
+  font-size: 16px;
+  border: none;
+  border-radius: 50%; /* Makes the button circular */
+  background-color: #ff8741;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  width: 40px; /* Fixed width for a perfect circle */
+  height: 40px; /* Fixed height for a perfect circle */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dark-mode-toggle:hover {
+  background-color: #0056b3;
+}
+
+    /* Dark mode overrides for text color */
+    .dark-mode .title, .dark-mode .description, .dark-mode .alphabet-placeholder, .dark-mode .alphabet-table th, .dark-mode .alphabet-table td, .dark-mode .alphabet-section p {
+      color: #ffffff; /* Text color is white in dark mode */
+    }
+
+    .dark-mode .alphabet-table th {
+      background-color: #007bff;
+      color: #ffffff; /* Header text color is white in dark mode */
+    }
+
+    .dark-mode .alphabet-table td {
+      background-color: #494949; /* Dark gray background for table cells in dark mode */
+    }
+
+    .dark-mode .alphabet-table tr:hover td {
+      background-color: #474747; /* Slightly darker gray on hover in dark mode */
+    }
+
+    .game-container {
+  margin-top: 20px;
+}
+
+/* page2*/
+
+body {
+  font-family: "Hiragino Mincho Pro", "Yu Mincho", "MS PMincho", serif;
+}
+
+.game-question {
+  margin-bottom: 20px;
+}
+
+.game-question p {
+  font-size: 2em; /* フォントサイズを2倍に */
+  line-height: 1.5; /* 行間を調整 */
+}
+
+.choices {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 10px;
+}
+
+.choice {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: 2px solid #007bff;
+  border-radius: 5px;
+ 
+  cursor: grab;
+  transition: background-color 0.3s;
+}
+
+.choice:hover {
+  background-color: #585858;
+}
+
+.dropzone {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  border: 2px dashed #007bff;
+  border-radius: 5px;
+  text-align: center;
+  line-height: 30px;
+  margin: 0 5px;
+  background-color: #f0f0f0;
+}
+
+.dropzone.filled {
+  border-style: solid;
+}
+
+.feedback {
+  margin-top: 10px;
+  font-weight: bold;
+}
+  </style>
+</head>
+<body>
+
+  <div class="book-container">
+    <!-- Dark Mode Toggle Button -->
+    <button class="dark-mode-toggle" onclick="toggleDarkMode()">
+      🌗
+    </button>
+
+    <!-- Table of Contents Page -->
+    <div class="page active" id="toc">
+      <div class="title">Table of Contents</div>
+      <div class="toc-list">
+        <ul>
+          <li><a href="#" onclick="showPage(1)">1. Introduction: Japanese Alphabet</a></li>
+          <li><a href="#" onclick="showPage(2)">2. Chapter 1: The Hiragana</a></li>
+          <li><a href="#" onclick="showPage(3)">3. Chapter 2: The Middle</a></li>
+          <li><a href="#" onclick="showPage(4)">4. Chapter 3: The Climax</a></li>
+          <li><a href="#" onclick="showPage(5)">5. Conclusion</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Section Pages -->
+    <div class="page" id="page1">
+      <div class="title">1. Introduction: Japanese Alphabet</div>
+      <div class="alphabet-section">
+        <h2>😊</h2>
+        <p>The Japanese alphabet contains <span class="highlight">5 vowels</span>, followed by <span class="highlight">10 consonants</span>, making a total of <span class="highlight">50 basic sounds</span> </p>
+        <p>In addition, there are extra sounds:</p>
+        <ul>
+          <span class="highlight">20 (dakuon)</span></li>
+          <span class="highlight">5 (handakuon)</span></li>
+          <span class="highlight">33 (youon)</span></li>
+        </ul>
+        <p>This brings the total number of sounds to <span class="highlight">108</span>.</p>
+        <p>Focus on learning the <span class="highlight">50 basic sounds</span> first.</p>
+        <p>Here is the <span class="highlight">Hiragana</span> table:</p>
+        <table class="alphabet-table">
+          <thead>
+            <tr>
+              <th></th>
+              <th class="vowel-header">A</th>
+              <th class="vowel-header">I</th>
+              <th class="vowel-header">U</th>
+              <th class="vowel-header">E</th>
+              <th class="vowel-header">O</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th class="consonant-header">-</th>
+              <td>あ (a)</td>
+              <td>い (i)</td>
+              <td>う (u)</td>
+              <td>え (e)</td>
+              <td>お (o)</td>
+            </tr>
+            <tr>
+              <th class="consonant-header">K</th>
+              <td>か (ka)</td>
+              <td>き (ki)</td>
+              <td>く (ku)</td>
+              <td>け (ke)</td>
+              <td>こ (ko)</td>
+            </tr>
+            <tr>
+              <th class="consonant-header">S</th>
+              <td>さ (sa)</td>
+              <td>し (si)</td>
+              <td>す (su)</td>
+              <td>せ (se)</td>
+              <td>そ (so)</td>
+            </tr>
+            <tr>
+              <th class="consonant-header">T</th>
+              <td>た (ta)</td>
+              <td>ち (ti)</td>
+              <td>つ (tu)</td>
+              <td>て (te)</td>
+              <td>と (to)</td>
+            </tr>
+            <tr>
+              <th class="consonant-header">N</th>
+              <td>な (na)</td>
+              <td>に (ni)</td>
+              <td>ぬ (nu)</td>
+              <td>ね (ne)</td>
+              <td>の (no)</td>
+            </tr>
+            <tr>
+              <th class="consonant-header">H</th>
+              <td>は (ha)</td>
+              <td>ひ (hi)</td>
+              <td>ふ (fu)</td>
+              <td>へ (he)</td>
+              <td>ほ (ho)</td>
+            </tr>
+            <tr>
+              <th class="consonant-header">M</th>
+              <td>ま (ma)</td>
+              <td>み (mi)</td>
+              <td>む (mu)</td>
+              <td>め (me)</td>
+              <td>も (mo)</td>
+            </tr>
+            <tr>
+              <th class="consonant-header">Y</th>
+              <td>や (ya)</td>
+              <td>-</td>
+              <td>ゆ (yu)</td>
+              <td>-</td>
+              <td>よ (yo)</td>
+            </tr>
+            <tr>
+              <th class="consonant-header">R</th>
+              <td>ら (ra)</td>
+              <td>り (ri)</td>
+              <td>る (ru)</td>
+              <td>れ (re)</td>
+              <td>ろ (ro)</td>
+            </tr>
+            <tr>
+              <th class="consonant-header">W</th>
+              <td>わ (wa)</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>を (wo)</td>
+            </tr>
+            <tr>
+              <th class="consonant-header">N</th>
+              <td colspan="5">ん (nn)</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>To learn this table effectively, you just need to focus on the <span class="highlight">5 vowels</span> and <span class="highlight">10 consonants</span>.</p>
+        <p>For example: <span class="highlight">a, i, u, e, o</span> and <span class="highlight">K, S, T, N, H, M, R, Y, W</span>.</p>
+        <p>If you memorize this row, you can automatically learn the other sounds.</p>
+        <p><span class="highlight">S + E = SE = せ</span> and <span class="highlight">M + I = MI = み</span>, and so on.</p>
+      </div>
+      <button class="back-to-toc" onclick="showPage(0)">Back to TOC</button>
+    </div>
+
+    <!-- Other pages remain unchanged -->
+    <div class="page" id="page2">
+      <div class="title">2. Chapter 1: The Hiragana</div>
+    
+      <div class="alphabet-section">
+        <p><span class="highlight">Hiragana (ひらがな)</span> is one of the three writing systems used in the Japanese language. It is primarily used for <span class="highlight">native Japanese words, grammatical functions, verb endings, and particles.</span></p>
+        <p>You may be wondering why there are only 46 characters in the table and why 4 are missing: Yi (Ye 𛀁), Wi (ゐ), Wu, and We (ゑ).</p>
+        <p>This is because:</p>
+        <ul>
+          <li>ゐ (Wi) and ゑ (We) became <span class="highlight">obsolete</span> as their sounds merged with い (I) and え (E) in modern Japanese.</li>
+          <li>𛀁 (Ye), Yi, and Wu represented sounds that existed in the past but <span class="highlight">disappeared very early</span>, by the Heian period. As a result, the standard Hiragana system no longer includes these sounds.</li>
+        </ul>
+      </div>
+      <div class="game-container">
+        <div class="game-question">
+          <p>Question 1. </p><p>Fill the empty space by Drag & Drop</p>
+          <p>あかさ<span class="dropzone" data-answer="た"></span>な　は<span class="dropzone" data-answer="ま"></span><span class="dropzone" data-answer="や"></span>わ</p>
+          <div class="choices">
+            <div class="choice" draggable="true" data-value="た">た</div>
+            <div class="choice" draggable="true" data-value="ま">ま</div>
+            <div class="choice" draggable="true" data-value="や">や</div>
+            <div class="choice" draggable="true" data-value="か">か</div>
+          </div>
+          <p class="feedback" id="feedback1"></p>
+          <button class="nav-button" onclick="nextQuestion()">Next Question</button>
+        </div>
+        <div class="game-question" style="display: none;">
+          <p>Question 2. </p><p>Fill the empty space by Drag & Drop</p>
+          <p>あか<span class="dropzone" data-answer="さ"></span>た<span class="dropzone" data-answer="な"></span>　<span class="dropzone" data-answer="は"></span>まらやわ</p>
+          <div class="choices">
+            <div class="choice" draggable="true" data-value="さ">さ</div>
+            <div class="choice" draggable="true" data-value="な">な</div>
+            <div class="choice" draggable="true" data-value="は">は</div>
+            <div class="choice" draggable="true" data-value="ま">ま</div>
+          </div>
+          <p class="feedback" id="feedback2"></p>
+          <button class="nav-button" onclick="nextQuestion()">Next Question</button>
+        </div>
+        <div class="game-question" style="display: none;">
+          <p>Question 3. </p><p>Fill the empty space by Drag & Drop</p>
+          <p><span class="dropzone" data-answer="あ"></span><span class="dropzone" data-answer="か"></span>さたな　はまら<span class="dropzone" data-answer="や"></span><span class="dropzone" data-answer="わ"></span></p>
+          <div class="choices">
+            <div class="choice" draggable="true" data-value="あ">あ</div>
+            <div class="choice" draggable="true" data-value="か">か</div>
+            <div class="choice" draggable="true" data-value="や">や</div>
+            <div class="choice" draggable="true" data-value="わ">わ</div>
+          </div>
+          <p class="feedback" id="feedback3"></p>
+          <button class="nav-button" onclick="nextQuestion()">Next Question</button>
+        </div>
+        <div class="game-question" style="display: none;">
+          <p>Question 4.</p><p>Fill the empty space by Drag & Drop</p>
+          <p><span class="dropzone" data-answer="あ"></span><span class="dropzone" data-answer="か"></span><span class="dropzone" data-answer="さ"></span><span class="dropzone" data-answer="た"></span><span class="dropzone" data-answer="な"></span><span class="dropzone" data-answer="は"></span><span class="dropzone" data-answer="ま"></span><span class="dropzone" data-answer="や"></span><span class="dropzone" data-answer="ら"></span><span class="dropzone" data-answer="わ"></span></p>
+          <div class="choices">
+            <div class="choice" draggable="true" data-value="あ">あ</div>
+            <div class="choice" draggable="true" data-value="か">か</div>
+            <div class="choice" draggable="true" data-value="さ">さ</div>
+            <div class="choice" draggable="true" data-value="た">た</div>
+            <div class="choice" draggable="true" data-value="な">な</div>
+            <div class="choice" draggable="true" data-value="は">は</div>
+            <div class="choice" draggable="true" data-value="ま">ま</div>
+            <div class="choice" draggable="true" data-value="や">や</div>
+            <div class="choice" draggable="true" data-value="ら">ら</div>
+            <div class="choice" draggable="true" data-value="わ">わ</div>
+          </div>
+          <p class="feedback" id="feedback4"></p>
+          <button class="nav-button" onclick="showResult()">Show Result</button>
+          <button class="nav-button" onclick="tryAgain()">Try Again</button>
+        </div>
+      </div>
+      <button class="back-to-toc" onclick="showPage(0)">Back to TOC</button>
+    </div>
+
+    <div class="page" id="page3">
+      <div class="title">3. Chapter 2: The Middle</div>
+      <div class="description">
+        This is <span class="highlight">Chapter 2</span>. The plot thickens as we reach the middle of the story.
+      </div>
+      <button class="back-to-toc" onclick="showPage(0)">Back to TOC</button>
+    </div>
+
+    <div class="page" id="page4">
+      <div class="title">4. Chapter 3: The Climax</div>
+      <div class="description">
+        You are now in <span class="highlight">Chapter 3</span>. The story reaches its peak here.
+      </div>
+      <button class="back-to-toc" onclick="showPage(0)">Back to TOC</button>
+    </div>
+
+    <div class="page" id="page5">
+      <div class="title">5. Conclusion</div>
+      <div class="description">
+        This is the <span class="highlight">Conclusion</span>. The story wraps up, and all loose ends are tied.
+      </div>
+      <button class="back-to-toc" onclick="showPage(0)">Back to TOC</button>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="nav-buttons">
+      <button class="nav-button" onclick="prevPage()">Previous</button>
+      <button class="nav-button" onclick="nextPage()">Next</button>
+    </div>
+
+    <!-- Return Button -->
+    <button class="return-button" onclick="goBack()">Return</button>
+  </div>
+
+  <script>
+    let isDarkMode = localStorage.getItem('darkMode') === 'true';
+    let currentPage = 0; // Start with the Table of Contents
+
+    // Apply dark mode on page load
+    if (isDarkMode) {
+      document.body.classList.add('dark-mode');
+    }
+
+    // Function to toggle dark mode
+    function toggleDarkMode() {
+      isDarkMode = !isDarkMode;
+      document.body.classList.toggle('dark-mode', isDarkMode);
+      localStorage.setItem('darkMode', isDarkMode);
+    }
+
+    // 戻るボタンの機能
+    function goBack() {
+      window.history.back();
+    }
+
+    // ページ遷移の機能
+    function showPage(pageNumber) {
+      currentPage = pageNumber;
+      document.querySelectorAll('.page').forEach(page => {
+        page.classList.remove('active');
+      });
+      document.getElementById(pageNumber === 0 ? 'toc' : `page${pageNumber}`).classList.add('active');
+    }
+
+    function nextPage() {
+      if (currentPage < 5) {
+        currentPage++;
+        showPage(currentPage);
+      }
+    }
+
+    function prevPage() {
+      if (currentPage > 0) {
+        currentPage--;
+        showPage(currentPage);
+      }
+    }
+
+    // 初期ページを表示 (Table of Contents)
+    showPage(currentPage);
+    
+    
+    // page2 
+    let currentQuestion = 0;
+let score = 0;
+
+document.addEventListener('DOMContentLoaded', () => {
+  shuffleChoices();
+  setupDragAndDrop();
+});
+
+function shuffleChoices() {
+  const questions = document.querySelectorAll('.game-question');
+  questions.forEach(question => {
+    const choicesContainer = question.querySelector('.choices');
+    const choices = Array.from(choicesContainer.children);
+    const shuffledChoices = shuffleArray(choices);
+    choicesContainer.innerHTML = '';
+    shuffledChoices.forEach(choice => choicesContainer.appendChild(choice));
+  });
+}
+
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+function setupDragAndDrop() {
+  const choices = document.querySelectorAll('.choice');
+  const dropzones = document.querySelectorAll('.dropzone');
+
+  choices.forEach(choice => {
+    choice.addEventListener('dragstart', dragStart);
+  });
+
+  dropzones.forEach(dropzone => {
+    dropzone.addEventListener('dragover', dragOver);
+    dropzone.addEventListener('drop', drop);
+  });
+}
+
+function dragStart(event) {
+  event.dataTransfer.setData('text/plain', event.target.dataset.value);
+}
+
+function dragOver(event) {
+  event.preventDefault();
+}
+
+function drop(event) {
+  event.preventDefault();
+  const data = event.dataTransfer.getData('text/plain');
+  const dropzone = event.target;
+  const correctAnswer = dropzone.dataset.answer;
+
+  if (data === correctAnswer) {
+    dropzone.textContent = data;
+    dropzone.style.backgroundColor = '#30ff53'; // Green for correct
+    score++;
+  } else {
+    dropzone.textContent = data;
+    dropzone.style.backgroundColor = '#ff3030'; // Red for incorrect
+  }
+  dropzone.classList.add('filled');
+}
+
+function nextQuestion() {
+  const questions = document.querySelectorAll('.game-question');
+  questions[currentQuestion].style.display = 'none';
+  currentQuestion++;
+  if (currentQuestion < questions.length) {
+    questions[currentQuestion].style.display = 'block';
+    shuffleChoices();
+    setupDragAndDrop();
+  }
+}
+
+function showResult() {
+  alert(`You scored ${score} out of 4!`);
+}
+
+function tryAgain() {
+  const questions = document.querySelectorAll('.game-question');
+  questions.forEach((question, index) => {
+    question.style.display = index === 0 ? 'block' : 'none';
+  });
+  currentQuestion = 0;
+  score = 0;
+  document.querySelectorAll('.dropzone').forEach(dropzone => {
+    dropzone.textContent = '';
+    dropzone.style.backgroundColor = '';
+    dropzone.classList.remove('filled');
+  });
+  shuffleChoices();
+  setupDragAndDrop();
+}
+  </script>
+
+</body>
+</html>

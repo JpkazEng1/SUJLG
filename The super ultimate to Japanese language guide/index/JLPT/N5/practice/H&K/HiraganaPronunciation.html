@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hiragana Pronunciation Practice</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #98c1ff;
+      color: #000000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .game-container {
+      text-align: center;
+      background-color: #f0f0f0;
+      padding: 50px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 300px;
+      transition: background-color 0.3s;
+    }
+
+    .title {
+      font-size: 32px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .button {
+      display: inline-block;
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      margin: 10px;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .button:hover {
+      background-color: #45a049;
+    }
+
+    .restart-button {
+      background-color: #f44336;
+    }
+
+    .restart-button:hover {
+      background-color: #e53935;
+    }
+
+    body.dark-mode {
+      background-color: #121212;
+      color: #ffffff;
+    }
+
+    body.dark-mode .game-container {
+      background-color: #1f1f1f;
+    }
+
+    .hiragana {
+      font-size: 50px;
+      margin-bottom: 20px;
+    }
+
+    .english {
+      font-size: 0.5em; 
+      color: #555; 
+    }
+
+    .input-field {
+      padding: 10px;
+      font-size: 27px;
+      width: 100%;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .result {
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .remaining-count {
+      font-size: 18px;
+      margin-top: 10px;
+    }
+
+    .final-result {
+      font-size: 24px;
+      margin-top: 20px;
+      color: #4CAF50;
+    }
+  </style>
+</head>
+<body>
+  <div class="game-container">
+    <div class="title">Hiragana Pronunciation Practice</div>
+    <div class="instruction">Press the voice recognition button, speak, and then wait a few seconds.</div>
+    <div id="hiragana" class="hiragana"></div>
+    <div id="audio-controls">
+      <button id="startRecognition" class="button">Start Voice Recognition</button>
+    </div>
+    <input type="text" id="userInput" class="input-field" placeholder="Enter reading here (or try to say it!)">
+    <div id="result" class="result"></div>
+    <div id="remainingCount" class="remaining-count"></div>
+    <div id="finalResult" class="final-result"></div>
+    <a href="Hiragana_explanation.html" class="button explanation-button">Explanation</a>
+    <button id="restartButton" class="button restart-button">Restart</button>
+    <a href="../practiceN5.html" class="button">Return</a>
+  </div>
+
+  <style>
+    .explanation-button {
+      background-color: #e68a00; 
+      color: white; 
+    }
+
+    .explanation-button:hover {
+      background-color: #a35f00; 
+    }
+  </style>
+
+<script>
+  const hiraganaList = {
+    あめ: { jp: "雨", en: "Rain" }, いぬ: { jp: "犬", en: "Dog" }, うみ: { jp: "海", en: "Sea" }, えきまえ: { jp: "駅前", en: "Front station" },
+おに: { jp: "鬼", en: "demon" }, かめ: { jp: "亀", en: "Turtle" }, きつね: { jp: "キツネ", en: "Fox" }, くも: { jp: "雲", en: "Cloud" },
+けむし: { jp: "毛虫", en: "Caterpillar" }, ことば: { jp: "言葉", en: "Word" }, さかな: { jp: "魚", en: "Fish" }, しお: { jp: "塩", en: "Salt" },
+すず: { jp: "鈴", en: "Bell" }, せみ: { jp: "セミ", en: "Cicada" }, そら: { jp: "空", en: "Sky" }, たけ: { jp: "竹", en: "Bamboo" },
+ちず: { jp: "地図", en: "Map" }, つばさ: { jp: "つばさ", en: "Wing" }, てがみ: { jp: "手紙", en: "Letter" }, とり: { jp: "鳥", en: "Bird" },
+なべ: { jp: "鍋", en: "Pot" }, にちじょう: { jp: "日常", en: "Everyday life" }, ぬの: { jp: "布", en: "Cloth" }, ねこ: { jp: "猫", en: "Cat" },
+のり: { jp: "海苔", en: "Seaweed" }, はな: { jp: "花", en: "Flower" }, ひつじ: { jp: "羊", en: "Sheep" }, ふくろ: { jp: "袋", en: "Bag" },
+へび: { jp: "蛇", en: "Snake" }, ほし: { jp: "星", en: "Star" }, まめ: { jp: "豆", en: "Bean" }, みず: { jp: "水", en: "Water" },
+むし: { jp: "虫", en: "Insect" }, めだま: { jp: "目玉", en: "Eyeball" }, もり: { jp: "森", en: "Forest" }, やま: { jp: "山", en: "Mountain" },
+ゆき: { jp: "雪", en: "Snow" }, よる: { jp: "夜", en: "Night" }, らくだ: { jp: "ラクダ", en: "Camel" }, りす: { jp: "リス", en: "Squirrel" },
+るす: { jp: "留守", en: "Absence" }, れいぞうこ: { jp: "冷蔵庫", en: "Refrigerator" }, ろうそく: { jp: "ろうそく", en: "Candle" }, わしょく: { jp: "和食", en: "Japanese food" },
+これをください: { jp: "これを下さい", en: "Please give me this" }, あんこ: { jp: "あんこ", en: "Sweet red bean paste" }, がっこう: { jp: "学校", en: "School" }, ぎん: { jp: "銀", en: "Silver" },
+ぐあい: { jp: "具合", en: "Condition" }, げた: { jp: "下駄", en: "sandals" }, ごはん: { jp: "ご飯", en: "Meal" }, ざっし: { jp: "雑誌", en: "Magazine" },
+じてんしゃ: { jp: "自転車", en: "Bicycle" }, ずこう: { jp: "図工", en: "arts and crafts" }, ぜんぶ: { jp: "全部", en: "All" }, ぞうきん: { jp: "雑巾", en: "Cleaning cloth" },
+だいく: { jp: "大工", en: "Carpenter" }, はなぢ: { jp: "鼻血", en: "Nosebleed" }, つづき: { jp: "続き", en: "Continuation" }, でんわ: { jp: "電話", en: "Phone" },
+どろ: { jp: "泥", en: "Mud" }, ばら: { jp: "バラ", en: "Rose" }, びょうき: { jp: "病気", en: "Illness" }, ぶどう: { jp: "ぶどう", en: "Grape" },
+べんきょう: { jp: "勉強", en: "Study" }, ぼうえき: { jp: "貿易", en: "Trade" }, ぱちんこ: { jp: "パチンコ", en: "pinball game" }, ぴったり: { jp: "ぴったり", en: "Exactly" },
+ぷるぷる: { jp: "プルプル", en: "Quivering" }, ぺんぎん: { jp: "ペンギン", en: "Penguin" }, ぽんず: { jp: "ポン酢", en: "citrus sauce" }, きゃべつ: { jp: "キャベツ", en: "Cabbage" },
+きゅうり: { jp: "きゅうり", en: "Cucumber" }, きょじん: { jp: "巨人", en: "Giant" }, しゃけ: { jp: "鮭", en: "Salmon" }, しゅりけん: { jp: "手裏剣", en: "ninja star" },
+しょうゆ: { jp: "醤油", en: "Soy sauce" }, ちゃわん: { jp: "茶碗", en: "Rice bowl" }, ちゅうしゃ: { jp: "注射", en: "Injection" }, ちょきん: { jp: "貯金", en: "Saving money" },
+にゃんこ: { jp: "にゃんこ", en: "Kitty" }, にゅういん: { jp: "入院", en: "Hospitalization" }, にょろにょろ: { jp: "ニョロニョロ", en: "Wriggling" }, ひゃくえん: { jp: "100円", en: "100 yen" },
+ひゅーひゅー: { jp: "ヒューヒュー", en: "whistling sound" }, ひょうか: { jp: "評価", en: "Evaluation" }, みゃく: { jp: "脈", en: "Pulse" }, みゅーじっく: { jp: "ミュージック", en: "Music" },
+みょうじ: { jp: "苗字", en: "Surname" }, りゃくご: { jp: "略語", en: "Abbreviation" }, りゅうがく: { jp: "留学", en: "Studying abroad" }, りょこう: { jp: "旅行", en: "Travel" },
+ぎゃく: { jp: "逆", en: "Reverse" }, ぎゅうにゅう: { jp: "牛乳", en: "Milk" }, ぎょかいるい: { jp: "魚介類", en: "Seafood" }, じゃがいも: { jp: "じゃがいも", en: "Potato" },
+じゅうしょ: { jp: "住所", en: "Address" }, じょせい: { jp: "女性", en: "Woman" }, びゃくや: { jp: "白夜", en: "Midnight sun" }, びゅーてぃふる: { jp: "ビューティフル", en: "Beautiful" },
+びょうき: { jp: "病気", en: "Illness" }, ぴゃっぴゃ: { jp: "ぴゃ", en: "squishy step" }, ぴゅーぴゅー: { jp: "ピューピュー", en: "Whistling sound" }, ぴょんぴょん: { jp: "ぴょんぴょん", en: "Hopping" }
+  };
+
+  let currentHiragana = "";
+  let correctAnswer = "";
+  let correctCount = 0;
+  let wrongCount = 0;
+  const totalHiragana = Object.keys(hiraganaList).length;
+
+  let wrongHiragana = [];
+  let allAnswered = new Set();
+
+  function getRandomHiragana() {
+    const unansweredHiragana = Object.keys(hiraganaList).filter(hiragana => !allAnswered.has(hiragana));
+    if (unansweredHiragana.length === 0) {
+      return wrongHiragana[Math.floor(Math.random() * wrongHiragana.length)];
+    }
+    return unansweredHiragana[Math.floor(Math.random() * unansweredHiragana.length)];
+  }
+
+  function displayHiragana() {
+    currentHiragana = getRandomHiragana();
+    correctAnswer = hiraganaList[currentHiragana];
+    document.getElementById("hiragana").innerText = `${currentHiragana} (${hiraganaList[currentHiragana].en})`;
+    document.getElementById("userInput").value = '';
+    document.getElementById("result").innerText = '';
+    updateRemainingCount();
+  }
+
+  function checkAnswer() {
+  const userAnswer = document.getElementById("userInput").value.trim();
+  if (correctAnswer.jp === userAnswer) {  // 答えが漢字（jp）と一致するかチェック
+    correctCount++;
+    document.getElementById("result").innerText = "Correct! 🎉";
+    document.getElementById("result").style.color = "green";
+    allAnswered.add(currentHiragana);
+    const index = wrongHiragana.indexOf(currentHiragana);
+    if (index !== -1) {
+      wrongHiragana.splice(index, 1);
+    }
+  } else {
+    document.getElementById("result").innerText = "Try again! ❌";
+    document.getElementById("result").style.color = "red";
+    wrongCount++;
+    if (!wrongHiragana.includes(currentHiragana)) {
+      wrongHiragana.push(currentHiragana);
+    }
+  }
+  setTimeout(displayHiragana, 1000);  // 次のひらがなを1秒後に表示
+}
+
+
+  function startRecognition() {
+    if (!("SpeechRecognition" in window || "webkitSpeechRecognition" in window)) {
+      alert("Your browser does not support voice recognition.");
+      return;
+    }
+
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = 'ja-JP';
+
+    recognition.onresult = (event) => {
+      const spokenText = event.results[0][0].transcript.trim();
+      document.getElementById("userInput").value = spokenText;
+      checkAnswer();
+    };
+
+    recognition.onerror = (event) => {
+      console.error('Recognition error:', event.error);
+      document.getElementById("result").innerText = "Recognition failed. Please try again.";
+      document.getElementById("result").style.color = "red";
+    };
+
+    recognition.start();
+  }
+
+  function updateRemainingCount() {
+    const remaining = totalHiragana - correctCount;
+    document.getElementById("remainingCount").innerText = `Remaining: ${remaining} Hiragana`;
+
+    if (remaining <= 0) {
+      document.getElementById("remainingCount").style.display = 'none';
+      document.getElementById("finalResult").innerText = `You finished the game! 🎉`;
+      document.getElementById("finalResult").style.color = correctCount === totalHiragana ? 'green' : 'red';
+      document.getElementById("result").style.display = 'none';
+      document.getElementById("userInput").disabled = true;
+    }
+  }
+
+  function restartGame() {
+    correctCount = 0;
+    wrongCount = 0;
+    wrongHiragana = [];
+    allAnswered.clear();
+    document.getElementById("finalResult").innerText = "";
+    document.getElementById("remainingCount").style.display = 'block';
+    document.getElementById("result").style.display = 'block';
+    document.getElementById("userInput").disabled = false;
+    displayHiragana();
+  }
+
+  displayHiragana();
+
+  document.getElementById("userInput").addEventListener("keydown", function(event) {
+    if (event.key === "Enter") {
+      checkAnswer();
+    }
+  });
+  document.getElementById("startRecognition").addEventListener("click", startRecognition);
+  document.getElementById("restartButton").addEventListener("click", restartGame);
+
+  if (localStorage.getItem('darkMode') === 'true') {
+    document.body.classList.add('dark-mode');
+  }
+</script>
+</body>
+</html>

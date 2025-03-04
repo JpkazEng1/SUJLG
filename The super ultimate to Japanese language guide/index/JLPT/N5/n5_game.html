@@ -48,13 +48,22 @@
       transition: background-color 0.3s, transform 0.2s;
     }
 
+    .button[href="./Japanesebook/book.html"] {
+  background-color: #0000ff; /* Blue color */
+}
+
+.button[href="./Japanesebook/book.html"]:hover {
+  background-color: #0000ff; /* ホバー時も青色を維持 */
+  transform: scale(1.05); /* サイズ変更のアニメーションはそのまま */
+}
+
     .button:hover {
       background-color: #45a049;
       transform: scale(1.05); /* Slightly increase the size on hover */
     }
 
     .button[href="practice/practiceN5.html"] {
-      background-color: #4400ff;
+      background-color: #83799e;
     }
 
     .button[href="mocktest/mocktestN5.html"] {
@@ -75,8 +84,9 @@
 <body>
   <div class="game-container">
     <div class="title">N5 level</div>
-    <a href="practice/practiceN5.html" class="button">Practice</a>
-    <a href="mocktest/mocktestN5.html" class="button">Mock Test</a>
+    <a href="practice/practiceN5.html" class="button">Monotonous practice</a><br>
+    <a href="./Japanesebook/book.html" class="button">Japanese Book</a><br>
+    <a href="mocktest/mocktestN5.html" class="button">Mock Test</a><br><p></p>
     <a href="../../index.html" class="button">Return</a>
   </div>
 
